@@ -24,10 +24,10 @@ if __name__ == "__main__":
         flat.append(parceline(f))
     print(*flat)
 
-    # creating a pygame widow
+    # creating a pygame window
     screen = pg.display.set_mode((1280, 720))
 
-    # cleaner coords import
+    # cleaner cords import
     y, x = parceline(f)
 
     # creating a surface for flat render
@@ -46,7 +46,7 @@ if __name__ == "__main__":
         screen.fill((140, 140, 140))
         sf.fill((110, 110, 110))
 
-        # checking for keyboar, window, mouse inputs or events
+        # checking for keyboard, window, mouse inputs or events
         keys = pg.key.get_pressed()
         for event in pg.event.get():
             if event.type == pg.QUIT:
@@ -70,6 +70,7 @@ if __name__ == "__main__":
                   if flat[x][y] == 1:
                     flat[x][y] = 0
                     score += 1
+            # Click LMB for create dirt and click RMB for create obstacles
             if event.type == pg.MOUSEBUTTONDOWN:
                 posx = int(event.pos[0] // 100)
                 posy = int(event.pos[1] // 100)
@@ -120,7 +121,8 @@ if __name__ == "__main__":
 
         # drawing robot
         pg.draw.circle(sf, (220, 0, 0), [(x + 0.5) * scale * 5, (y + 0.5) * scale * 5], scale * 2.5)
-
+        
+        # Counter removed dirt
         f = pg.font.Font(None, 72)
         text = f.render(str(score) + " грязи убрано",True,[255,0,0])
 
