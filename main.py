@@ -103,9 +103,9 @@ if __name__ == "__main__":
 
         # checking for scale changes
         if keys[pg.K_p]:
-            scale += 0.01
+            scale += 0.05
         if keys[pg.K_o]:
-            scale -= 0.01
+            scale -= 0.05
 
         # drawing flat
         for i, line in enumerate(e.flat):
