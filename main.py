@@ -68,7 +68,6 @@ def do(event):
 if __name__ == "__main__":
 
     e = Environment()
-    print(e.flat)
     scale = 150 / (max(e.m, e.n))
     # creating a pygame window
     screen = pg.display.set_mode((1280, 720))
@@ -131,10 +130,10 @@ if __name__ == "__main__":
                                                           [min(vx, i * scale * 5), min(vy, (j + 1) * scale * 5)]], 1)
 
         e.check()
+
         pg.draw.circle(sf, (220, 0, 0), [(e.objects[0].x + 0.5) * scale * 5, (e.objects[0].y + 0.5) * scale * 5], scale * 2.5)
 
         pg.draw.polygon(screen, (80, 80, 80), [[0, 0], [vx, 0], [vx, vy], [0, vy]], 1)
 
         screen.blit(sf, (0, 0))
-
         pg.display.flip()
