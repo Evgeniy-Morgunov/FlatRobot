@@ -1,6 +1,5 @@
 # pygame and sys libraries importing
 import pygame as pg
-import sys
 import random
 import enum
 
@@ -16,6 +15,7 @@ class command(enum.Enum):
     clean = 5
     dirt = 6
     cl = 7
+    none = 8
 
 class obj:
     def __init__(self,x,y):
@@ -49,8 +49,55 @@ class Environment:
                 i.y = 0
             if i.x < 0:
                 i.x = 0
+    
+    def event(self,f):
+        if f == command.up:
+            e.objects[0].y -= 1
+        if f == command.down:
+            e.objects[0].y += 1
+        if f == command.left:
+            e.objects[0].x -= 1
+        if f == command.right:
+            e.objects[0].x += 1
+        if f == command.clean:
+            e.flat[e.objects[0].x][e.objects[0].y] = command.cl
+    
+    def type(self):
+        k = [e.flat[e.objects[0].x][e.objects[0].y]]
+        
+        if e.objects[0].x + 1 > self.n-1:
+            k.append(command.none)
+        else:
+            k.append(e.flat[e.objects[0].x+1][e.objects[0].y])
+        
+        if e.objects[0].x - 1 < 0:
+            k.append(command.none)
+        else:
+            k.append(e.flat[e.objects[0].x-1][e.objects[0].y])
+        
+        if e.objects[0].y + 1 > self.m-1:
+            k.append(command.none)
+        else:
+            k.append(e.flat[e.objects[0].x][e.objects[0].y+1])
+        
+        if e.objects[0].y - 1 < 0:
+            k.append(command.none)
+        else:
+            k.append(e.flat[e.objects[0].x][e.objects[0].y-1])
+        return k
 
-def do(event):
+def doA(k):    
+    if k[4] == command.none and k[2] == command.none:
+        print("YES")
+        return command.left
+    else:
+        if k[4] != command.none:
+            return command.up
+        if k[2] != command.none:
+            return command.left
+    
+
+def do(event,k):
     if event.type != pg.KEYDOWN:
         return 0
     if event.key == pg.K_w:
@@ -71,12 +118,12 @@ if __name__ == "__main__":
     scale = 150 / (max(e.m, e.n))
     # creating a pygame window
     screen = pg.display.set_mode((1280, 720))
-
+    clock = pg.time.Clock()
+    
     # creating a surface for flat render
     view_flat = vx, vy = int(screen.get_width() * 2 / 3), int(screen.get_height() * 2 / 3)
     sf = pg.Surface((vx, vy))
     sf.fill((110, 110, 110))
-
     # main cycle
     while True:
         # surfaces cleaning
@@ -88,18 +135,10 @@ if __name__ == "__main__":
         for event in pg.event.get():
             if event.type == pg.QUIT:
                 exit()
-            f = do(event)
+        
+        f = doA(e.type())
 
-            if f == command.up:
-                e.objects[0].y -= 1
-            if f == command.down:
-                e.objects[0].y += 1
-            if f == command.left:
-                e.objects[0].x -= 1
-            if f == command.right:
-                e.objects[0].x += 1
-            if f == command.clean:
-                e.flat[e.objects[0].x][e.objects[0].y] = command.cl
+        e.event(f)
 
         # checking for scale changes
         if keys[pg.K_p]:
@@ -128,12 +167,12 @@ if __name__ == "__main__":
                                                           [min(vx, (i + 1) * scale * 5), min(vy, j * scale * 5)],
                                                           [min(vx, (i + 1) * scale * 5), min(vy, (j + 1) * scale * 5)],
                                                           [min(vx, i * scale * 5), min(vy, (j + 1) * scale * 5)]], 1)
-
+        
         e.check()
-
         pg.draw.circle(sf, (220, 0, 0), [(e.objects[0].x + 0.5) * scale * 5, (e.objects[0].y + 0.5) * scale * 5], scale * 2.5)
 
         pg.draw.polygon(screen, (80, 80, 80), [[0, 0], [vx, 0], [vx, vy], [0, vy]], 1)
 
         screen.blit(sf, (0, 0))
         pg.display.flip()
+        clock.tick(6)
